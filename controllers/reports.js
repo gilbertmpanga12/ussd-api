@@ -77,15 +77,16 @@ router.post('/api/monthly-report', async (req,res) => {
 
 	if(collectionType === 'loancollection_logs'){
 		report.forEach(report => {
-			fullReuslts.push(report.data());
+			fullReuslts.push({'Amount': `UGX${report.data()['amount']}`, 'Rerefence id':report.data()['customerReferenceId'], 'Telephone':report.data()['msisdn'], 'Loan repayment':moment(report.data()['date_time']).format("dddd, MMMM Do YYYY, h:mm:ss a"), 'MM transaction id':report.data()['network_ref']});
 			docDefinition.content[1].table.body.push([`UGX${report.data()['amount']}`,report.data()['customerReferenceId'],
 			report.data()['msisdn'], moment(report.data()['date_time']).format("dddd, MMMM Do YYYY, h:mm:ss a"), 
 			report.data()['network_ref']]);
 		});
 
 	}else{
+		docDefinition.content[1].table.body[0] = ['Amount', 'Rerefence id', 'Telephone', 'Loan repayment', 'Status'];
 		report.forEach(report => {
-			fullReuslts.push(report.data());
+			fullReuslts.push({'Amount':`UGX${report.data()['amount']}`, 'Rerefence id': report.data()['transactionRef'], 'Telephone':report.data()['phoneNumber'], 'Loan repayment':moment(report.data()['transactionInitiationDate']).format("dddd, MMMM Do YYYY, h:mm:ss a"), 'Transaction type':report.data()['transactionType']});
 			docDefinition.content[1].table.body.push([`UGX${report.data()['transactionRef']}`,report.data()['amount'],
 			report.data()['phoneNumber'], moment(report.data()['transactionInitiationDate']).format("dddd, MMMM Do YYYY, h:mm:ss a"), 
 			report.data()['transactionType']]);
