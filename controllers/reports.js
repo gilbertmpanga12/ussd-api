@@ -77,15 +77,15 @@ router.post('/api/monthly-report', async (req,res) => {
 
 	if(collectionType === 'loancollection_logs'){
 		report.forEach(report => {
-			fullReuslts.push(report.data);
+			fullReuslts.push(report.data());
 			docDefinition.content[1].table.body.push([`UGX${report.data()['amount']}`,report.data()['customerReferenceId'],
 			report.data()['msisdn'], moment(report.data()['date_time']).format("dddd, MMMM Do YYYY, h:mm:ss a"), 
 			report.data()['network_ref']]);
 		});
 
 	}else{
-		fullReuslts.push(report.data);
 		report.forEach(report => {
+			fullReuslts.push(report.data());
 			docDefinition.content[1].table.body.push([`UGX${report.data()['transactionRef']}`,report.data()['amount'],
 			report.data()['phoneNumber'], moment(report.data()['transactionInitiationDate']).format("dddd, MMMM Do YYYY, h:mm:ss a"), 
 			report.data()['transactionType']]);
