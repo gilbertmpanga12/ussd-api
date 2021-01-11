@@ -62,7 +62,7 @@ router.post('/api/monthly-report', async (req,res) => {
 	const collectionType = req.body['collectionType'];
 	const titleOperation = collectionType === 'loancollection_logs' ? 'Loan Collections': 'Loan Disbursements';
 	const report = await monthlyReport(startDate, endDate, typeofReport, collectionType); //docDefinition.content[0].text
-	
+	const fullReuslts = [];
 	switch(typeofReport){
 		case 'monthly':
 			docDefinition.content[0].text = titleOperation + ' Transactions for ' + moment().format('MMMM');
@@ -77,13 +77,14 @@ router.post('/api/monthly-report', async (req,res) => {
 
 	if(collectionType === 'loancollection_logs'){
 		report.forEach(report => {
+			fullReuslts.push(report.data);
 			docDefinition.content[1].table.body.push([`UGX${report.data()['amount']}`,report.data()['customerReferenceId'],
 			report.data()['msisdn'], moment(report.data()['date_time']).format("dddd, MMMM Do YYYY, h:mm:ss a"), 
 			report.data()['network_ref']]);
 		});
 
 	}else{
-		
+		fullReuslts.push(report.data);
 		report.forEach(report => {
 			docDefinition.content[1].table.body.push([`UGX${report.data()['transactionRef']}`,report.data()['amount'],
 			report.data()['phoneNumber'], moment(report.data()['transactionInitiationDate']).format("dddd, MMMM Do YYYY, h:mm:ss a"), 
@@ -91,7 +92,7 @@ router.post('/api/monthly-report', async (req,res) => {
 		});
 	}
   
-	printPdf(fonts, docDefinition, res);
+	printPdf(fonts, docDefinition, res, fullReuslts);
     
     }catch(e){
         console.log('FAILED TO RETURN MONTHLY TRANSACTIONS');

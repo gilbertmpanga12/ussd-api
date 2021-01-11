@@ -38,7 +38,7 @@ async function collectionlogs(payload){
   .add(payload);
 }
 
-async function printPdf(fonts, docDefinition, res){
+async function printPdf(fonts, docDefinition, res, fullReuslts){
   const printer = new PdfPrinter(fonts);
 	let pdfDoc = printer.createPdfKitDocument(docDefinition);
 	
@@ -57,15 +57,15 @@ async function printPdf(fonts, docDefinition, res){
 	stream.on('finish', () => {
 		file.getSignedUrl(expirydate).then(url => {
      const pdfUrl = url[0];
-      printCsv(documents, pdfUrl, res);
+      printCsv(fullReuslts, pdfUrl, res);
 		});
 	});
 	pdfDoc.end();
 }
 
-async function printCsv(documents, pdfUrl, res){
+async function printCsv(fullReuslts, pdfUrl, res){
   const json2csvParser = new Parser();
-  const csv = json2csvParser.parse(documents);
+  const csv = json2csvParser.parse(fullReuslts);
   const bucket = firebase.storage().bucket('tax-as-a-service.appspot.com');
 	const gcsname = `${uuidv4()}.csv`;
   const file = bucket.file(gcsname);
