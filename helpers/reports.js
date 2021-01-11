@@ -56,13 +56,14 @@ async function printPdf(fonts, docDefinition, res){
 	});
 	stream.on('finish', () => {
 		file.getSignedUrl(expirydate).then(url => {
-			res.status(200).json({message: url[0]});
+     const pdfUrl = url[0];
+      printCsv(documents, pdfUrl, res);
 		});
 	});
 	pdfDoc.end();
 }
 
-async function printCsv(documents, res){
+async function printCsv(documents, pdfUrl, res){
   const json2csvParser = new Parser();
   const csv = json2csvParser.parse(documents);
   const bucket = firebase.storage().bucket('tax-as-a-service.appspot.com');
@@ -71,7 +72,7 @@ async function printCsv(documents, res){
   file.save(csv, function(err){
     if(err) throw err;
     file.getSignedUrl(expirydate).then(url => {
-      res.status(200).json({message: url[0]});
+      res.status(200).json({pdfUrl: pdfUrl, csvUrl: url[0]});
   });
   });
   
