@@ -1,10 +1,7 @@
 const {Router} = require('express');
 const router = Router();
-const {monthlyReport} = require('../helpers/reports');
-const PdfPrinter = require('pdfmake');
+const {monthlyReport, printPdf} = require('../helpers/reports');
 const moment = require('moment');
-const { v4: uuidv4 } = require('uuid');
-const firebase = require('firebase-admin');
 const {getFirebaseUser} = require('../helpers/firebaseSecurity');
 
 var fonts = {
@@ -93,37 +90,8 @@ router.post('/api/monthly-report', async (req,res) => {
 			report.data()['transactionType']]);
 		});
 	}
-
-	const printer = new PdfPrinter(fonts);
-	var pdfDoc = printer.createPdfKitDocument(docDefinition);
-	
-    const bucket = firebase.storage().bucket('tax-as-a-service.appspot.com');
-	const gcsname = `${uuidv4()}.pdf`;
-	const file = bucket.file(gcsname)
-	// var pdfdata = gcsname;
-	// var buff = Buffer.from(pdfdata, 'binary').toString('utf-8');
-	
-	const stream = file.createWriteStream({
-		metadata: {
-			contentType: 'application/pdf'
-		}
-	});
-
-    pdfDoc.pipe(stream);
-	
-	stream.on('error', (err) => {
-		console.log(err);
-	});
-	stream.on('finish', () => {
-		file.getSignedUrl({
-			action: 'read',
-			expires: '03-09-2500',
-		  }).then(url => {
-			res.status(200).json({message: url[0]});
-		});
-	});
-	pdfDoc.end();
-	// stream.end(new Buffer(buff, 'base64'));
+  
+	printPdf(fonts, docDefinition, res);
     
     }catch(e){
         console.log('FAILED TO RETURN MONTHLY TRANSACTIONS');
