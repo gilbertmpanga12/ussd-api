@@ -13,22 +13,22 @@ const {notifyOyaMicrocredit} = require('../helpers/checkstatus');
 const headers = {CLIENT_ACCESS_APIKEY: environment.CLIENT_ACCESS_APIKEY, API_CLIENT: environment.API_CLIENT};
 // const {guardTransaction} = require('../helpers/ussdSecurity');
 
-router.use(function(req, res, next){
-    try{
-        checkForBalance().then((balance) => {
-            if(balance.data().fundsAvailableCount < 0){
-                res.status(500).send({message: "Insufficient balance to complete transaction. Please load more and try again"});
-            }else{
-                next();
-            }
-        });
-    }catch(e){
-        console.log('FIREBASE BALANCE INSUFFICIENT');
-        console.log(e);
-        res.status(500).send({message: "Oops an error occured while processing your request, try again"});
-    }
+// const balanceChecker = function(req, res, next){
+//     try{
+//         checkForBalance().then((balance) => {
+//             if(balance.data().fundsAvailableCount < 0){
+//                 res.status(500).send({message: "Insufficient balance to complete transaction. Please load more and try again"});
+//             }else{
+//                 next();
+//             }
+//         });
+//     }catch(e){
+//         console.log('FIREBASE BALANCE INSUFFICIENT');
+//         console.log(e);
+//         res.status(500).send({message: "Oops an error occured while processing your request, try again"});
+//     }
     
-});
+// };
 
 
 // validate customer reference ID
