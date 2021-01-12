@@ -21,7 +21,7 @@ async function checkSingleBalanceStatus(transactionRef){
   let payload = {
     AutoCreate: {
       Request: {
-        APIUsername: environment.username,
+        APIUsername: environment.oyausername,
         APIPassword: environment.password,
         Method: "actransactioncheckstatus",
         TransactionReference: transactionRef,
@@ -40,7 +40,7 @@ async function getBulkTransactionStatus(transactionRef){
   let payload = {
     AutoCreate: {
       Request: {
-        APIUsername: environment.username,
+        APIUsername: environment.oyausername,
         APIPassword: environment.password,
         Method: "accheckbulkpaymentstatus",
         BulkPaymentRequestIdentifier: transactionRef,
