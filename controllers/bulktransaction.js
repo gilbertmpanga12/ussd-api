@@ -12,7 +12,7 @@ const {status, storeBulkTransaction, checkBulkStatus, saveTransaction} = require
 const {incrementTransactionCounter, checkForBalance} = require('../helpers/counters');
 const {getFirebaseUser} = require('../helpers/firebaseSecurity');
 
-
+router.use(getFirebaseUser);
 
 router.use(function(req, res, next){
     try{
@@ -31,7 +31,7 @@ router.use(function(req, res, next){
     
 });
 
-router.use(getFirebaseUser);
+
 
 // bulk payment
 router.post('/pay-bulk-payment', 

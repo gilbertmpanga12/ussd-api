@@ -11,6 +11,7 @@ const {setBalance} = require('../helpers/checkBalance');
 const {checkNetworkOperator} = require('../helpers/networkChecker');
 const {notifyOyaMicrocredit} = require('../helpers/checkstatus');
 const headers = {CLIENT_ACCESS_APIKEY: environment.CLIENT_ACCESS_APIKEY, API_CLIENT: environment.API_CLIENT};
+const moment = require('moment');
 // const {guardTransaction} = require('../helpers/ussdSecurity');
 
 // const balanceChecker = function(req, res, next){
@@ -44,7 +45,6 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
         const availableBalanceResponse = availableBalance.data;
         availableBalanceResponse['ISSUED_AT'] = Date.now();
        // const balance = availableBalanceResponse['Balance'];
-        
         res.status(200).json({...availableBalanceResponse});
         setBalance(customerReferenceId, availableBalanceResponse);
         return;
