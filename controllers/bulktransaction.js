@@ -39,11 +39,10 @@ function(req,res){
     const json = req.body;
     const beneficiaries = json['xml'];
     const phoneNumbers = json['phoneNumbers'];
-    const actualAmount = json['actualAmount'];
     let xml = '<?xml version="1.0" encoding="UTF-8" ?>';
     xml += "<AutoCreate>";
     xml += "<Request>";
-    xml += "<APIUsername>" + environment.username + "</APIUsername>";
+    xml += "<APIUsername>" + environment.oyausername + "</APIUsername>";
     xml += "<APIPassword>" + environment.password + "</APIPassword>";
     xml += "<Method>accreatebulkpayment</Method>";
     xml += "<Name>" + "OyaCreditBulkPayments" + "</Name>";
@@ -111,7 +110,7 @@ router.get('/withdraw/:amount/:phoneNumber/:narrative/:actualAmount', function(r
     let payload = {
         AutoCreate: {
             Request: {
-                APIUsername: environment.username,
+                APIUsername: environment.oyausername,
                 APIPassword: environment.password,
                 Method: "acwithdrawfunds",
                 NonBlocking: "TRUE",
@@ -172,7 +171,7 @@ router.get('/ac_internal_transfer/:currencyCode/:eneficiaryAccount/:email/:amoun
     let payload = {
         AutoCreate: {
             Request: {
-                APIUsername: environment.username,
+                APIUsername: environment.oyausername,
                 APIPassword: environment.password,
                 Method: "acinternaltransfer",
                 CurrencyCode: req.params['currencyCode'],
