@@ -39,6 +39,7 @@ function(req,res){
     const json = req.body;
     const beneficiaries = json['xml'];
     const phoneNumbers = json['phoneNumbers'];
+    const bulkReason = json['reason'];
     let xml = '<?xml version="1.0" encoding="UTF-8" ?>';
     xml += "<AutoCreate>";
     xml += "<Request>";
@@ -46,7 +47,7 @@ function(req,res){
     xml += "<APIPassword>" + environment.password + "</APIPassword>";
     xml += "<Method>accreatebulkpayment</Method>";
     xml += "<Name>" + "OyaCreditBulkPayments" + "</Name>";
-    xml += "<Description>" + "Bulk payments with mobile money" + "</Description>";
+    xml += "<Description>" + bulkReason + "</Description>";
     // xml += "<SchedulePayment>" + req.params['schedulePayment'] + "</SchedulePayment>";
     xml += "<GroupwidePaymentNotificationText >" + "You have received a money from Oya MicroCredit" + "</GroupwidePaymentNotificationText >";
     xml += "<PrivateBulkPaymentRequestId>" + uuidv4() + "</PrivateBulkPaymentRequestId>";
@@ -76,24 +77,20 @@ function(req,res){
                 return;
             }
             const transactionRef = result_load["BulkPaymentRequestIdentifier"][0];
-            const transactionInitiationDate =  Date.now();
-            var bulkTransactionTotal = 0;
-            let formatedPhoneNumbers = phoneNumbers.map(phoneNumber => {
-                bulkTransactionTotal += (parseInt(phoneNumber['Amount']) + 500);
-                return {transactionRef: transactionRef, amount: phoneNumber['Amount'], 
-                    transactionInitiationDate:transactionInitiationDate, 
-                    transactionType: "Bulk Payment", phoneNumber:phoneNumber['MSISND'], amountWithCharges: (parseInt(phoneNumber['Amount']) + 500), 
-                    name:phoneNumber['Name'], reason: phoneNumber['Reason'], status:"COMFIRMED"};
-            });
-            
-            storeBulkTransaction(formatedPhoneNumbers);
-    
-            incrementTransactionCounter(transactionRef);
+            // const transactionInitiationDate =  Date.now();
+            // var bulkTransactionTotal = 0;
+            // let formatedPhoneNumbers = phoneNumbers.map(phoneNumber => {
+            //     bulkTransactionTotal += (parseInt(phoneNumber['Amount']) + 500);
+            //     return {transactionRef: transactionRef, amount: phoneNumber['Amount'], 
+            //         transactionInitiationDate:transactionInitiationDate, 
+            //         transactionType: "Bulk Payment", phoneNumber:phoneNumber['MSISND'], amountWithCharges: (parseInt(phoneNumber['Amount']) + 500), 
+            //         name:phoneNumber['Name'], reason: phoneNumber['Reason'], status:"COMFIRMED"};
+            // });
+            // storeBulkTransaction(formatedPhoneNumbers);
+            // incrementTransactionCounter(transactionRef);
 
             res.status(200).send(result);
-            setTimeout(() => {
-                checkBulkStatus(transactionRef, bulkTransactionTotal);
-                }, 20000);
+            checkBulkStatus(transactionRef);
             });
     });
 

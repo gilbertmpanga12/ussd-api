@@ -9,6 +9,7 @@ const {
 const axios = require('axios').default;
 const {getBulkTransactionStatus, checkSingleBalanceStatus} = require('./balances');
 const parseString = require('xml2js').parseString;
+const {incrementTransactionCounter} = require('./counters');
 
 
 function status(transactionRef,
@@ -53,7 +54,7 @@ function status(transactionRef,
 }
 
 
-function checkBulkStatus(transactionRef , amount) {
+function checkBulkStatus(transactionRef) {
   
   getBulkTransactionStatus(transactionRef).then(results => {
     console.log('checking bulk status');
@@ -65,11 +66,22 @@ function checkBulkStatus(transactionRef , amount) {
     console.log('STATUS CALLED');
     console.log(result_load);
     console.log(status);
-    console.log(result_load['Beneficiaries'][0]['Beneficiary']);
-    console.log(JSON.parse(result_load['Beneficiaries'][0]['Beneficiary']));
+    const paymentStatues = result_load['Beneficiaries'][0]['Beneficiary'];
     if (status == "OK") {
-        incrementsingleBulkTransactionCounter(amount);
-        reduceAmountCollected(amount);
+        const unsuccessfulPayments = paymentStatues.filter(transaction => transaction['Status'][0] === 'NOT PAID');
+        const passedPayments = paymentStatues.filter(transaction => transaction['Status'][0] !== 'NOT PAID');
+        
+        if(passedPayments.length > 0){
+          incrementTransactionCounter(transactionRef);
+          const total = passedPayments.reduce((accumulator, currentValue) => accumulator + parseInt(currentValue['Amount'][0]),0);
+          storeBulkTransaction(passedPayments);
+          incrementsingleBulkTransactionCounter(total);
+          reduceAmountCollected(total);
+        }
+
+        if(unsuccessfulPayments.length > 0){
+          storeFailedBulkTransactions(unsuccessfulPayments);
+        }
       }
     });
     
@@ -161,8 +173,40 @@ async function storeBulkTransaction(bulkPayload) {
       var transactionsCollection = firebase
         .firestore()
         .collection("transactions")
-        .doc(uuidv4());
-      batch.set(transactionsCollection, dataload);
+        .doc(dataload['ProviderReference'][0]);
+        batch.set(transactionsCollection, {
+          transactionRef: dataload['ProviderReference'][0], 
+          amount: dataload['Amount'][0], 
+          transactionInitiationDate: moment().format('x'), 
+          transactionType: "Bulk Payment", phoneNumber:dataload['AccountNumber'][0], 
+          amountWithCharges: (parseInt(dataload['Amount'][0]) + 500), 
+          name:dataload['Name'][0], reason: 'Successfully paid UGX ' + dataload['Amount'][0], status:"CONFIRMED"});
+    });
+    batch.commit().then(function () {
+      console.log("TRANSACTION DONE");
+    });
+  } catch (e) {
+    console.log("FIREBASE FAILURE: BULK SAVE TRANSACTION");
+    console.log(e);
+  }
+}
+
+async function storeFailedBulkTransactions(bulkPayload) {
+  try {
+    let batch = firebase.firestore().batch();
+
+    bulkPayload.forEach((dataload) => {
+      var transactionsCollection = firebase
+        .firestore()
+        .collection("transactions")
+        .doc(dataload['ProviderReference'][0]);
+      batch.set(transactionsCollection, {
+      transactionRef: dataload['ProviderReference'][0], 
+      amount: dataload['Amount'][0], 
+      transactionInitiationDate:dataload['LowLevelErrorMessageNegative'][0].substring(0,10), 
+      transactionType: "Bulk Payment", phoneNumber:dataload['AccountNumber'][0], 
+      amountWithCharges: (parseInt(dataload['Amount'][0]) + 500), 
+      name:dataload['Name'][0], reason: dataload['LowLevelErrorMessageNegative'][0], status:"FAILED"});
     });
     batch.commit().then(function () {
       console.log("TRANSACTION DONE");
