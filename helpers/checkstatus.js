@@ -65,7 +65,7 @@ function checkBulkStatus(transactionRef , amount) {
     console.log('STATUS CALLED');
     console.log(result_load);
     console.log(status);
-    console.log(result_load['Beneficiaries']['Beneficiary'];
+    console.log(result_load['Beneficiaries']['Beneficiary']);
     if (status == "OK") {
         incrementsingleBulkTransactionCounter(amount);
         reduceAmountCollected(amount);
