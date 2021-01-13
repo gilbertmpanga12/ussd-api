@@ -70,7 +70,8 @@ function checkBulkStatus(transactionRef) {
     if (status == "OK") {
         const unsuccessfulPayments = paymentStatues.filter(transaction => transaction['Status'][0] === 'NOT PAID');
         const passedPayments = paymentStatues.filter(transaction => transaction['Status'][0] !== 'NOT PAID');
-        
+        console.log(unsuccessfulPayments);
+        console.log(passedPayments);
         if(passedPayments.length > 0){
           incrementTransactionCounter(transactionRef);
           const total = passedPayments.reduce((accumulator, currentValue) => accumulator + parseInt(currentValue['Amount'][0]),0);
