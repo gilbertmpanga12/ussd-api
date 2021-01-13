@@ -68,6 +68,8 @@ function(req,res){
     function(error, response, body){
         parseString(body, function (err, result) {
             const result_load = result["AutoCreate"]["Response"][0];
+            console.log('result load block');
+            console.log(result_load);
             const statusCode = result_load["Status"][0];
             if(statusCode === "ERROR"){
                 res.status(500).send({message: result_load["StatusMessage"][0]});

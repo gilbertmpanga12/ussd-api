@@ -16,6 +16,7 @@ const fs = require('fs');
 const rateLimit = require("express-rate-limit");
 const {getFirebaseUser} = require('./helpers/firebaseSecurity');
 
+
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100 // limit each IP to 100 requests per windowMs
@@ -46,6 +47,7 @@ app.use('/bulk-transactions',  bulkTransaction);
 app.use('/reports', reports);
 app.get('/refresh-token', getFirebaseUser, (req, res) => res.status(200).json({status: true, ...req.user}));
 app.get('/', (req,res) =>  res.send({message: "server works"}));
+
 
 app.listen(environment.port, () => {
     console.log('listening on🚀🚀🚀' + ' ' + environment.port);
