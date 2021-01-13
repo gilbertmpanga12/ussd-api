@@ -171,12 +171,13 @@ async function storeBulkTransaction(bulkPayload) {
     let batch = firebase.firestore().batch();
 
     bulkPayload.forEach((dataload) => {
+      const docId = dataload['EmailAddress'][0].substring(1,11);
       var transactionsCollection = firebase
         .firestore()
         .collection("transactions")
-        .doc(dataload['ProviderReference'][0]);
+        .doc(docId);
         batch.set(transactionsCollection, {
-          transactionRef: dataload['ProviderReference'][0], 
+          transactionRef: docId, 
           amount: dataload['Amount'][0], 
           transactionInitiationDate: moment().format('x'), 
           transactionType: "Bulk Payment", phoneNumber:dataload['AccountNumber'][0], 
@@ -195,14 +196,14 @@ async function storeBulkTransaction(bulkPayload) {
 async function storeFailedBulkTransactions(bulkPayload) {
   try {
     let batch = firebase.firestore().batch();
-
     bulkPayload.forEach((dataload) => {
+      const docId = dataload['EmailAddress'][0].substring(1,11);
       var transactionsCollection = firebase
         .firestore()
         .collection("transactions")
-        .doc(dataload['ProviderReference'][0]);
+        .doc(docId);
       batch.set(transactionsCollection, {
-      transactionRef: dataload['ProviderReference'][0], 
+      transactionRef: docId, 
       amount: dataload['Amount'][0], 
       transactionInitiationDate:dataload['LowLevelErrorMessageNegative'][0].substring(0,10), 
       transactionType: "Bulk Payment", phoneNumber:dataload['AccountNumber'][0], 

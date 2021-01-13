@@ -38,15 +38,16 @@ router.post('/pay-bulk-payment',
 function(req,res){
     const json = req.body;
     const beneficiaries = json['xml'];
-    const phoneNumbers = json['phoneNumbers'];
+    // const phoneNumbers = json['phoneNumbers'];
     const bulkReason = json['reason'];
+    const from = json['from'];
     let xml = '<?xml version="1.0" encoding="UTF-8" ?>';
     xml += "<AutoCreate>";
     xml += "<Request>";
     xml += "<APIUsername>" + environment.oyausername + "</APIUsername>";
     xml += "<APIPassword>" + environment.password + "</APIPassword>";
     xml += "<Method>accreatebulkpayment</Method>";
-    xml += "<Name>" + "OyaCreditBulkPayments" + "</Name>";
+    xml += "<Name>" + from + "</Name>";
     xml += "<Description>" + bulkReason + "</Description>";
     // xml += "<SchedulePayment>" + req.params['schedulePayment'] + "</SchedulePayment>";
     xml += "<GroupwidePaymentNotificationText >" + "You have received a money from Oya MicroCredit" + "</GroupwidePaymentNotificationText >";
