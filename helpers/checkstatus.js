@@ -230,11 +230,33 @@ async function storeFailedBulkTransactions(bulkPayload) {
       name:dataload['Name'][0], reason: dataload['LowLevelErrorMessageNegative'][0], status:"FAILED"});
     });
     batch.commit().then(function () {
-      console.log("FAILDED TRANSACTION DONE");
+      console.log("FAILED TRANSACTION DONE");
     });
   } catch (e) {
     console.log("FIREBASE FAILURE: BULK SAVE TRANSACTION");
     console.log(e);
+  }
+}
+
+async function deleteFailedBulkTransactions(bulkPayload, res) {
+  try {
+    let batch = firebase.firestore().batch();
+    bulkPayload.forEach((uid) => {
+      var transactionsCollection = firebase
+        .firestore()
+        .collection("transactions")
+        .doc(uid);
+      batch.delete(transactionsCollection);
+    });
+
+    batch.commit().then(function () {
+      console.log("FAILED TRANSACTION DONE");
+      res.status(200).send({message: "Successfully deleted selected bulk payments"});
+    });
+  } catch (e) {
+    console.log("FIREBASE FAILURE: BULK SAVE TRANSACTION");
+    console.log(e);
+    res.status(500).send({message: "Something went wrong while deleting"});
   }
 }
 
@@ -286,4 +308,4 @@ async function notifyOyaMicrocredit(payload){
 
 
 module.exports = {storePayload, storeBulkTransaction, 
-fundsCollected, saveTransaction, checkBulkStatus, notifyOyaMicrocredit, status};
+fundsCollected, saveTransaction, checkBulkStatus, notifyOyaMicrocredit, status, deleteFailedBulkTransactions};
