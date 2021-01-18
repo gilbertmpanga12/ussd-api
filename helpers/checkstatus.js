@@ -245,7 +245,7 @@ async function deleteFailedBulkTransactions(bulkPayload, res) {
       var transactionsCollection = firebase
         .firestore()
         .collection("transactions")
-        .doc(uid);
+        .doc(uid['transactionRef']);
       batch.delete(transactionsCollection);
     });
 
