@@ -35,13 +35,24 @@ async function resetDisbursementErrorCount(){
     .doc(environment.uid).set({disbursementErrorCount: 1});
 }
 
-async function disbursementErrorCount(){
+async function disbursementErrorCount(count){
     try{
-    const increment =  firebase.firestore.FieldValue.increment(1);
+    const increment =  firebase.firestore.FieldValue.increment(count);
     await firebase.firestore().collection('disbursementErrorCount')
     .doc(environment.uid).update({disbursementErrorCount: increment});
     }catch(e){
         console.log('FAILED TO INCREMENT DISBURSEMENT ERROR COUNT');
+        console.log(e);
+    }
+}
+
+async function reduceDisbursementErrorCount(count){
+    try{
+    const decrement =  firebase.firestore.FieldValue.increment(-count);
+    await firebase.firestore().collection('disbursementErrorCount')
+    .doc(environment.uid).update({disbursementErrorCount: decrement});
+    }catch(e){
+        console.log('FAILED TO REDUCE DISBURSEMENT ERROR COUNT');
         console.log(e);
     }
 }
@@ -97,4 +108,4 @@ async function loadFloatBalance(amount){
 
 module.exports = {checkForBalance, reduceAmountCollected, fundsCollectedCounter, 
 incrementsingleBulkTransactionCounter, incrementTransactionCounter, loadFloatBalance, checkDisbursementErrorCount, 
-resetDisbursementErrorCount, disbursementErrorCount};
+resetDisbursementErrorCount, disbursementErrorCount, reduceDisbursementErrorCount};

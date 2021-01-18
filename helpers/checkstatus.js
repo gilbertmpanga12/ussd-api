@@ -9,7 +9,8 @@ const {
 const axios = require('axios').default;
 const {getBulkTransactionStatus, checkSingleBalanceStatus} = require('./balances');
 const parseString = require('xml2js').parseString;
-const {incrementTransactionCounter, checkDisbursementErrorCount, resetDisbursementErrorCount, disbursementErrorCount} = require('./counters');
+const {incrementTransactionCounter, checkDisbursementErrorCount, 
+  resetDisbursementErrorCount, disbursementErrorCount, reduceDisbursementErrorCount} = require('./counters');
 
 
 function status(transactionRef,
@@ -70,6 +71,8 @@ function checkBulkStatus(transactionRef) {
     if (status == "OK") {
         const unsuccessfulPayments = paymentStatues.filter(transaction => transaction['Status'][0] === 'NOT PAID');
         const passedPayments = paymentStatues.filter(transaction => transaction['Status'][0] !== 'NOT PAID');
+        const passedBulkPaymentsCount = passedPayments.length;
+        const failedBulkPaymentsCount = unsuccessfulPayments.length;
         console.log(unsuccessfulPayments);
         console.log(passedPayments);
         if(passedPayments.length > 0){
@@ -78,6 +81,7 @@ function checkBulkStatus(transactionRef) {
           storeBulkTransaction(passedPayments);
           incrementsingleBulkTransactionCounter(total);
           reduceAmountCollected(total);
+          reduceDisbursementErrorCount(passedBulkPaymentsCount);
         }
 
         if(unsuccessfulPayments.length > 0){
@@ -87,7 +91,7 @@ function checkBulkStatus(transactionRef) {
               resetDisbursementErrorCount();
               return;
             }
-            disbursementErrorCount();
+            disbursementErrorCount(failedBulkPaymentsCount);
 
           });
         }
