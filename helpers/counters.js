@@ -35,6 +35,11 @@ async function resetDisbursementErrorCount(){
     .doc(environment.uid).set({disbursementErrorCount: 1});
 }
 
+async function clearNotificationCounter(){
+    await firebase.firestore().collection('disbursementErrorCount')
+    .doc(environment.uid).set({disbursementErrorCount: 0});
+}
+
 async function disbursementErrorCount(count){
     try{
     const increment =  firebase.firestore.FieldValue.increment(count);
@@ -108,4 +113,4 @@ async function loadFloatBalance(amount){
 
 module.exports = {checkForBalance, reduceAmountCollected, fundsCollectedCounter, 
 incrementsingleBulkTransactionCounter, incrementTransactionCounter, loadFloatBalance, checkDisbursementErrorCount, 
-resetDisbursementErrorCount, disbursementErrorCount, reduceDisbursementErrorCount};
+resetDisbursementErrorCount, disbursementErrorCount, reduceDisbursementErrorCount, clearNotificationCounter};

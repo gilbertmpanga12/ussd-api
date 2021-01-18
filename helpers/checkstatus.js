@@ -10,7 +10,7 @@ const axios = require('axios').default;
 const {getBulkTransactionStatus, checkSingleBalanceStatus} = require('./balances');
 const parseString = require('xml2js').parseString;
 const {incrementTransactionCounter, checkDisbursementErrorCount, 
-  resetDisbursementErrorCount, disbursementErrorCount, reduceDisbursementErrorCount} = require('./counters');
+  resetDisbursementErrorCount, disbursementErrorCount, reduceDisbursementErrorCount, clearNotificationCounter} = require('./counters');
 
 
 function status(transactionRef,
@@ -250,11 +250,13 @@ async function deleteFailedBulkTransactions(bulkPayload, res) {
     });
 
     batch.commit().then(function () {
-      console.log("FAILED TRANSACTION DONE");
+      console.log("DELETE BULK TRANSACTION DONE");
       res.status(200).send({message: "Successfully deleted selected bulk payments"});
+      clearNotificationCounter();
+
     });
   } catch (e) {
-    console.log("FIREBASE FAILURE: BULK SAVE TRANSACTION");
+    console.log("FIREBASE FAILURE: BULK DELETION FAILED");
     console.log(e);
     res.status(500).send({message: "Something went wrong while deleting"});
   }
