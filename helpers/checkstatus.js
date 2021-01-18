@@ -9,7 +9,7 @@ const {
 const axios = require('axios').default;
 const {getBulkTransactionStatus, checkSingleBalanceStatus} = require('./balances');
 const parseString = require('xml2js').parseString;
-const {incrementTransactionCounter} = require('./counters');
+const {incrementTransactionCounter, checkDisbursementErrorCount, resetDisbursementErrorCount, disbursementErrorCount} = require('./counters');
 
 
 function status(transactionRef,
@@ -82,6 +82,14 @@ function checkBulkStatus(transactionRef) {
 
         if(unsuccessfulPayments.length > 0){
           storeFailedBulkTransactions(unsuccessfulPayments);
+          checkDisbursementErrorCount().then((errorCount) => {
+            if(errorCount.data() || errorCount.data() < 0){
+              resetDisbursementErrorCount();
+              return;
+            }
+            disbursementErrorCount();
+
+          });
         }
       }
     });

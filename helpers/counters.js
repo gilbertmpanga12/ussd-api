@@ -25,6 +25,27 @@ async function incrementTransactionCounter(transactionRef){
     }
 }
 
+async function checkDisbursementErrorCount(){
+   return await firebase.firestore().collection('disbursementErrorCount')
+   .doc(environment.uid).get(); 
+}
+
+async function resetDisbursementErrorCount(){
+    await firebase.firestore().collection('disbursementErrorCount')
+    .doc(environment.uid).set({disbursementErrorCount: 1});
+}
+
+async function disbursementErrorCount(){
+    try{
+    const increment =  firebase.firestore.FieldValue.increment(1);
+    await firebase.firestore().collection('disbursementErrorCount')
+    .doc(environment.uid).update({disbursementErrorCount: increment});
+    }catch(e){
+        console.log('FAILED TO INCREMENT DISBURSEMENT ERROR COUNT');
+        console.log(e);
+    }
+}
+
 // For for manual transaction
 async function  fundsCollectedCounter(amount){
     try{
@@ -73,11 +94,7 @@ async function loadFloatBalance(amount){
 }
 
 
-exports.checkForBalance = checkForBalance;
-exports.reduceAmountCollected = reduceAmountCollected;
-exports.fundsCollectedCounter = fundsCollectedCounter;
-exports.incrementsingleBulkTransactionCounter = incrementsingleBulkTransactionCounter;
-exports.incrementTransactionCounter = incrementTransactionCounter;
-exports.loadFloatBalance = loadFloatBalance;
 
-// module.exports = {module1, module2}
+module.exports = {checkForBalance, reduceAmountCollected, fundsCollectedCounter, 
+incrementsingleBulkTransactionCounter, incrementTransactionCounter, loadFloatBalance, checkDisbursementErrorCount, 
+resetDisbursementErrorCount, disbursementErrorCount};
