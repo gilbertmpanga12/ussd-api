@@ -88,8 +88,8 @@ function checkBulkStatus(transactionRef) {
         if(unsuccessfulPayments.length > 0){
           storeFailedBulkTransactions(unsuccessfulPayments);
           checkDisbursementErrorCount().then((errorCount) => {
-            if(errorCount.data() && errorCount.exists){
-              resetDisbursementErrorCount();
+            if(errorCount.data() > 0 && errorCount.exists){
+              disbursementErrorCount(failedBulkPaymentsCount);
               return;
             }
 
@@ -97,8 +97,8 @@ function checkBulkStatus(transactionRef) {
               resetDisbursementErrorCount();
               return;
             }
-            
-            disbursementErrorCount(failedBulkPaymentsCount);
+
+            resetDisbursementErrorCount();
 
           });
         }
