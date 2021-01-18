@@ -73,6 +73,7 @@ function checkBulkStatus(transactionRef) {
         const passedPayments = paymentStatues.filter(transaction => transaction['Status'][0] !== 'NOT PAID');
         const passedBulkPaymentsCount = passedPayments.length;
         const failedBulkPaymentsCount = unsuccessfulPayments.length;
+        console.log(passedBulkPaymentsCount, failedBulkPaymentsCount);
         console.log(unsuccessfulPayments);
         console.log(passedPayments);
         if(passedPayments.length > 0){
@@ -87,10 +88,16 @@ function checkBulkStatus(transactionRef) {
         if(unsuccessfulPayments.length > 0){
           storeFailedBulkTransactions(unsuccessfulPayments);
           checkDisbursementErrorCount().then((errorCount) => {
-            if(errorCount.data() || errorCount.data() < 0){
+            if(errorCount.data() && errorCount.exists){
               resetDisbursementErrorCount();
               return;
             }
+
+            if(errorCount.data() < 0 && errorCount.exists){
+              resetDisbursementErrorCount();
+              return;
+            }
+            
             disbursementErrorCount(failedBulkPaymentsCount);
 
           });
