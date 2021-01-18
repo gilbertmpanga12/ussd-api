@@ -179,13 +179,13 @@ async function storeBulkTransaction(bulkPayload) {
         batch.set(transactionsCollection, {
           transactionRef: docId, 
           amount: dataload['Amount'][0], 
-          transactionInitiationDate: moment().format('x'), 
+          transactionInitiationDate: Date.now(), 
           transactionType: "Bulk Payment", phoneNumber:dataload['AccountNumber'][0], 
           amountWithCharges: (parseInt(dataload['Amount'][0]) + 500), 
           name:dataload['Name'][0], reason: 'Successfully paid UGX ' + dataload['Amount'][0], status:"CONFIRMED"});
     });
     batch.commit().then(function () {
-      console.log("TRANSACTION DONE");
+      console.log("SUCCEEDED BULK TRANSACTION DONE");
     });
   } catch (e) {
     console.log("FIREBASE FAILURE: BULK SAVE TRANSACTION");
@@ -205,13 +205,13 @@ async function storeFailedBulkTransactions(bulkPayload) {
       batch.set(transactionsCollection, {
       transactionRef: docId, 
       amount: dataload['Amount'][0], 
-      transactionInitiationDate:dataload['LowLevelErrorMessageNegative'][0].substring(0,10), 
+      transactionInitiationDate:Date.now(), 
       transactionType: "Bulk Payment", phoneNumber:dataload['AccountNumber'][0], 
       amountWithCharges: (parseInt(dataload['Amount'][0]) + 500), 
       name:dataload['Name'][0], reason: dataload['LowLevelErrorMessageNegative'][0], status:"FAILED"});
     });
     batch.commit().then(function () {
-      console.log("TRANSACTION DONE");
+      console.log("FAILDED TRANSACTION DONE");
     });
   } catch (e) {
     console.log("FIREBASE FAILURE: BULK SAVE TRANSACTION");
