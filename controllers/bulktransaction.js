@@ -92,7 +92,7 @@ function(req,res){
             // incrementTransactionCounter(transactionRef);
 
             res.status(200).send(result);
-            checkBulkStatus(transactionRef);
+            setTimeout(() => checkBulkStatus(transactionRef), 20000);
             });
     });
 
