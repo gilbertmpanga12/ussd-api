@@ -60,6 +60,7 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
  // enter amount 
  router.post('/api/enter-amount', async (req,res) => { // guardTransaction,
      try{
+    console.log('enter amount called');
     const payload = req.body;
     const requestedLoan = payload['amount'];
     const customerReferenceId = payload['narrative'];
@@ -75,6 +76,14 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
         "COMPANYNAME": companyName,
         "CUSTOMERREFERENCEID": customerReferenceId
       };
+    console.log('oyaPayload called');
+    console.log({amount: payload['amount'], 
+    date_time: parseInt(moment(payload['date_time']).format('x')), 
+    external_ref: payload['external_ref'], 
+    msisdn: payload['msisdn'], 
+    customerReferenceId: payload['narrative'], 
+    network_ref: payload['network_ref'], 
+    signature: payload['signature'], generated_id: TXNID});
     collectionlogs({amount: payload['amount'], 
     date_time: parseInt(moment(payload['date_time']).format('x')), 
     external_ref: payload['external_ref'], 
@@ -98,10 +107,13 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
 
  function handleError(error, res){
     if (error.response) {
+        console.log(error.response.data);
         res.status(error.response.status).send(error.response.data);
       } else if (error.request) {
+        console.log(error.request)
         res.status(500).send(error.request);
       } else {
+        console.log(error.message);
         res.status(500).send(error.message);
       }
  }
