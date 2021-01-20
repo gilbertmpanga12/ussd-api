@@ -1,7 +1,6 @@
 require('dotenv').config();
 const environment = process.env;
 const firebase = require("firebase-admin");
-const { v4: uuidv4 } = require('uuid');
 const {
   incrementsingleBulkTransactionCounter,
   fundsCollectedCounter,reduceAmountCollected

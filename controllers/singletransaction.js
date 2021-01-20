@@ -12,6 +12,7 @@ const {checkNetworkOperator} = require('../helpers/networkChecker');
 const {notifyOyaMicrocredit} = require('../helpers/checkstatus');
 const headers = {CLIENT_ACCESS_APIKEY: environment.CLIENT_ACCESS_APIKEY, API_CLIENT: environment.API_CLIENT};
 const moment = require('moment');
+const { v4: uuidv4 } = require('uuid');
 // const {guardTransaction} = require('../helpers/ussdSecurity');
 
 // const balanceChecker = function(req, res, next){
@@ -67,7 +68,7 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
     const companyName = checkNetworkOperator(phoneNumber);
     const oyaPayload = {
         "TYPE": "SYNC_BILLPAY_REQUEST",
-        "TXNID": TXNID,
+        "TXNID": uuidv4(),
         "MSISDN": phoneNumber,
         "AMOUNT": requestedLoan,
         "COMPANYNAME": companyName,
