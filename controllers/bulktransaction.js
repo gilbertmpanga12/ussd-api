@@ -161,7 +161,7 @@ router.get('/withdraw/:amount/:phoneNumber/:narrative/:actualAmount', function(r
                         "Single Payment",
                         phoneNumber,
                         actualAmount,shortenTransactionRef);
-                }, 20000);
+                }, 25000);
             });
     });
 

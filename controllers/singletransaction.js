@@ -9,7 +9,7 @@ const {collectionlogs} = require('../helpers/reports');
 const {checkForBalance, loadFloatBalance, fundsCollectedCounter} = require('../helpers/counters');
 const {setBalance} = require('../helpers/checkBalance');
 const {checkNetworkOperator} = require('../helpers/networkChecker');
-const {notifyOyaMicrocredit} = require('../helpers/checkstatus');
+const {notifyOyaMicrocredit, test} = require('../helpers/checkstatus');
 const headers = {CLIENT_ACCESS_APIKEY: environment.CLIENT_ACCESS_APIKEY, API_CLIENT: environment.API_CLIENT};
 const moment = require('moment');
 const { v4: uuidv4 } = require('uuid');
@@ -60,39 +60,41 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
  // enter amount 
  router.post('/api/enter-amount', async (req,res) => { // guardTransaction,
      try{
+    
     console.log('enter amount called');
     const payload = req.body;
-    const requestedLoan = payload['amount'];
-    const customerReferenceId = payload['narrative'];
-    // const TXNID = payload['external_ref'];
-    const TXNID = uuidv4();
-    const phoneNumber = payload['msisdn'];
-    const companyName = checkNetworkOperator(phoneNumber);
-    const oyaPayload = {
-        "TYPE": "SYNC_BILLPAY_REQUEST",
-        "TXNID": TXNID,
-        "MSISDN": phoneNumber,
-        "AMOUNT": requestedLoan,
-        "COMPANYNAME": companyName,
-        "CUSTOMERREFERENCEID": customerReferenceId
-      };
-    console.log('oyaPayload called');
-    console.log({amount: payload['amount'], 
-    date_time: parseInt(moment(payload['date_time']).format('x')), 
-    external_ref: payload['external_ref'], 
-    msisdn: payload['msisdn'], 
-    customerReferenceId: payload['narrative'], 
-    network_ref: payload['network_ref'], 
-    signature: payload['signature'], generated_id: TXNID});
-    collectionlogs({amount: payload['amount'], 
-    date_time: parseInt(moment(payload['date_time']).format('x')), 
-    external_ref: payload['external_ref'], 
-    msisdn: payload['msisdn'], 
-    customerReferenceId: payload['narrative'], 
-    network_ref: payload['network_ref'], 
-    signature: payload['signature'], generated_id: TXNID});
-    fundsCollectedCounter(requestedLoan);
-    notifyOyaMicrocredit(oyaPayload);
+    // const requestedLoan = payload['amount'];
+    // const customerReferenceId = payload['narrative'];
+    // // const TXNID = payload['external_ref'];
+    // const TXNID = uuidv4();
+    // const phoneNumber = payload['msisdn'];
+    // const companyName = checkNetworkOperator(phoneNumber);
+    // const oyaPayload = {
+    //     "TYPE": "SYNC_BILLPAY_REQUEST",
+    //     "TXNID": TXNID,
+    //     "MSISDN": phoneNumber,
+    //     "AMOUNT": requestedLoan,
+    //     "COMPANYNAME": companyName,
+    //     "CUSTOMERREFERENCEID": customerReferenceId
+    //   };
+    // console.log('oyaPayload called');
+    // console.log({amount: payload['amount'], 
+    // date_time: parseInt(moment(payload['date_time']).format('x')), 
+    // external_ref: payload['external_ref'], 
+    // msisdn: payload['msisdn'], 
+    // customerReferenceId: payload['narrative'], 
+    // network_ref: payload['network_ref'], 
+    // signature: payload['signature'], generated_id: TXNID});
+    // collectionlogs({amount: payload['amount'], 
+    // date_time: parseInt(moment(payload['date_time']).format('x')), 
+    // external_ref: payload['external_ref'], 
+    // msisdn: payload['msisdn'], 
+    // customerReferenceId: payload['narrative'], 
+    // network_ref: payload['network_ref'], 
+    // signature: payload['signature'], generated_id: TXNID});
+    // fundsCollectedCounter(requestedLoan);
+    // notifyOyaMicrocredit(oyaPayload);
+    test(payload);
     res.send({message:'Synced to oya'});
   
      }catch(e){
