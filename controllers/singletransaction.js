@@ -63,12 +63,13 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
     const payload = req.body;
     const requestedLoan = payload['amount'];
     const customerReferenceId = payload['narrative'];
-    const TXNID = payload['external_ref'];
+    // const TXNID = payload['external_ref'];
+    const TXNID = uuidv4();
     const phoneNumber = payload['msisdn'];
     const companyName = checkNetworkOperator(phoneNumber);
     const oyaPayload = {
         "TYPE": "SYNC_BILLPAY_REQUEST",
-        "TXNID": uuidv4(),
+        "TXNID": TXNID,
         "MSISDN": phoneNumber,
         "AMOUNT": requestedLoan,
         "COMPANYNAME": companyName,
@@ -80,7 +81,7 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
     msisdn: payload['msisdn'], 
     customerReferenceId: payload['narrative'], 
     network_ref: payload['network_ref'], 
-    signature: payload['signature']});
+    signature: payload['signature'], generated_id: TXNID});
     fundsCollectedCounter(requestedLoan);
     notifyOyaMicrocredit(oyaPayload);
     res.send({message:'Synced to oya'});
