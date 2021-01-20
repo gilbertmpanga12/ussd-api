@@ -155,14 +155,14 @@ async function updateStatus(transactionRef, MMTransactionId){
 
 
 
-async function test(item){
-  try{
-    await firebase.firestore().collection('zega').add(item);
-  }catch(e){
-    console.log("ZEGAY FAILED");
-    console.log(e);
-  }
-}
+// async function test(item){
+//   try{
+//     await firebase.firestore().collection('zega').add(item);
+//   }catch(e){
+//     console.log("ZEGAY FAILED");
+//     console.log(e);
+//   }
+// }
 
 async function fundsCollected(
   transactionRef,
@@ -320,4 +320,4 @@ async function notifyOyaMicrocredit(payload){
 
 
 module.exports = {storePayload, storeBulkTransaction, 
-fundsCollected, saveTransaction, checkBulkStatus, notifyOyaMicrocredit, status, deleteFailedBulkTransactions, test};
+fundsCollected, saveTransaction, checkBulkStatus, notifyOyaMicrocredit, status, deleteFailedBulkTransactions};
