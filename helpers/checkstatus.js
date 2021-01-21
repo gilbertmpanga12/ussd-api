@@ -237,7 +237,7 @@ async function storeFailedBulkTransactions(bulkPayload) {
       transactionInitiationDate:Date.now(), 
       transactionType: "Bulk Payment", phoneNumber:dataload['AccountNumber'][0], 
       amountWithCharges: (parseInt(dataload['Amount'][0]) + 500), 
-      name:dataload['Name'][0], reason: dataload['LowLevelErrorMessageNegative'][0], status:"CONFIRMED"}); // FAILED
+      name:dataload['Name'][0], reason: dataload['LowLevelErrorMessageNegative'][0], status:"FAILED"});
     });
     batch.commit().then(function () {
       console.log("FAILED TRANSACTION DONE");
