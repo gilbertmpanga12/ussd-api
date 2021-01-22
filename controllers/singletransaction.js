@@ -77,14 +77,7 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
         "COMPANYNAME": companyName,
         "CUSTOMERREFERENCEID": customerReferenceId
       };
-    console.log('oyaPayload called');
-    console.log({amount: payload['amount'], 
-    date_time: parseInt(moment(payload['date_time']).format('x')), 
-    external_ref: payload['external_ref'], 
-    msisdn: payload['msisdn'], 
-    customerReferenceId: payload['narrative'], 
-    network_ref: payload['network_ref'], 
-    signature: payload['signature'], generated_id: TXNID});
+    console.log('IPN CALLED');
     collectionlogs({amount: payload['amount'], 
     date_time: parseInt(moment(payload['date_time']).format('x')), 
     external_ref: payload['external_ref'], 
