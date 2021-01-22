@@ -65,8 +65,8 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
     const payload = req.body;
     const requestedLoan = payload['amount'];
     const customerReferenceId = payload['narrative'];
-    // const TXNID = payload['external_ref'];
-    const TXNID = uuidv4();
+    const TXNID = payload['external_ref'];
+    // const TXNID = uuidv4();
     const phoneNumber = payload['msisdn'];
     const companyName = checkNetworkOperator(phoneNumber);
     const oyaPayload = {
@@ -78,16 +78,16 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
         "CUSTOMERREFERENCEID": customerReferenceId
       };
     console.log('IPN CALLED');
+    res.status(200).send({message: 'Syncing succcessful'});
     collectionlogs({amount: payload['amount'], 
     date_time: parseInt(moment(payload['date_time']).format('x')), 
     external_ref: payload['external_ref'], 
     msisdn: payload['msisdn'], 
     customerReferenceId: payload['narrative'], 
     network_ref: payload['network_ref'], 
-    signature: payload['signature'], generated_id: TXNID});
+    signature: payload['signature']}); // generated_id: TXNID
     fundsCollectedCounter(requestedLoan);
     notifyOyaMicrocredit(oyaPayload);
-    
      }catch(e){
         console.log(e);
         handleError(e, res);
