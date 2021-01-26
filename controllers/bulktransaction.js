@@ -42,6 +42,7 @@ function(req,res){
     // const phoneNumbers = json['phoneNumbers'];
     const bulkReason = json['reason'];
     const from = json['from'];
+    const firebaseUser = req.user['user_id'];
     let xml = '<?xml version="1.0" encoding="UTF-8" ?>';
     xml += "<AutoCreate>";
     xml += "<Request>";
@@ -92,7 +93,7 @@ function(req,res){
             // incrementTransactionCounter(transactionRef);
 
             res.status(200).send(result);
-            setTimeout(() => checkBulkStatus(transactionRef), 20000);
+            setTimeout(() => checkBulkStatus(transactionRef, firebaseUser), 20000);
             });
     });
 
@@ -107,7 +108,8 @@ router.get('/withdraw/:amount/:phoneNumber/:narrative/:actualAmount', function(r
     const phoneNumber = req.params['phoneNumber'];
     const narrative = req.params['narrative'];
     const actualAmount = req.params['actualAmount'];
-    
+    const firebaseUser = req.user['user_id'];
+
     let payload = {
         AutoCreate: {
             Request: {
@@ -151,7 +153,7 @@ router.get('/withdraw/:amount/:phoneNumber/:narrative/:actualAmount', function(r
                 transactionInitiationDate,
                 "Single Payment",
                 phoneNumber,
-                actualAmount, "PENDING");
+                actualAmount, "PENDING", firebaseUser);
     
             res.status(200).send(result);
             setTimeout(() => {
@@ -160,7 +162,7 @@ router.get('/withdraw/:amount/:phoneNumber/:narrative/:actualAmount', function(r
                         transactionInitiationDate,
                         "Single Payment",
                         phoneNumber,
-                        actualAmount,shortenTransactionRef);
+                        actualAmount,shortenTransactionRef, firebaseUser);
                 }, 25000);
             });
     });

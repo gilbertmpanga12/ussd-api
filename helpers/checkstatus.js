@@ -17,7 +17,7 @@ function status(transactionRef,
   transactionInitiationDate,
   transactionType,
   phoneNumber,
-  actualAmount, shortenTransactionRef) {
+  actualAmount, shortenTransactionRef, firebaseUser) {
   checkSingleBalanceStatus(transactionRef).then(results => {
     console.log('checking single status');
     console.log(results.data);
@@ -33,7 +33,7 @@ function status(transactionRef,
         if (
           transactionType == "Manual Recovery"
         ) {
-          fundsCollectedCounter(actualAmount);
+          fundsCollectedCounter(actualAmount, firebaseUser);
           // reduceAmountCollected(actualAmount);
           updateStatus(shortenTransactionRef, transactionRefMM);
            return;
@@ -54,7 +54,7 @@ function status(transactionRef,
 }
 
 
-function checkBulkStatus(transactionRef) {
+function checkBulkStatus(transactionRef, firebaseUser) {
   
   getBulkTransactionStatus(transactionRef).then(results => {
     console.log('checking bulk status');
@@ -118,9 +118,9 @@ async function saveTransaction(
   transactionInitiationDate,
   transactionType,
   phoneNumber,
-  actualAmount,status) {
+  actualAmount, status, firebaseUser) {
   try {
-    const uid = environment.uid;
+    const uid = firebaseUser;
     const charge = "500";
     await firebase
       .firestore()
@@ -170,10 +170,11 @@ async function fundsCollected(
   transactionInitiationDate,
   transactionType,
   phoneNumber,
-  actualAmount
+  actualAmount,
+  firebaseUser
 ) {
   try {
-    const uid = environment.uid;
+    const uid = firebaseUser;
     const charge = "500";
     await firebase
       .firestore()
