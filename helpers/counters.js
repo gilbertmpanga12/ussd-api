@@ -1,6 +1,5 @@
 require('dotenv').config();
 const firebase = require('firebase-admin');
-const environment = process.env;
 
 async function incrementsingleBulkTransactionCounter(amount, firebaseUser){
     try{
