@@ -35,7 +35,7 @@ async function monthlyReport(startDate, endDate, typeofReport, collectionType){
 
 async function collectionlogs(payload){
   await firebase.firestore().collection('loancollection_logs')
-  .add(payload);
+  .doc(payload['external_ref']).set(payload, {merge: true});
 }
 
 async function printPdf(fonts, docDefinition, res, fullReuslts){

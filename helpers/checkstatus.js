@@ -272,6 +272,10 @@ async function deleteFailedBulkTransactions(bulkPayload, res) {
   }
 }
 
+
+
+
+
 async function storePayload(payload){
   try{
     const data = JSON.stringify(payload);
@@ -318,6 +322,48 @@ async function notifyOyaMicrocredit(payload){
 
 }
 
-
 module.exports = {storePayload, storeBulkTransaction, 
-fundsCollected, saveTransaction, checkBulkStatus, notifyOyaMicrocredit, status, deleteFailedBulkTransactions};
+  fundsCollected, saveTransaction, checkBulkStatus, notifyOyaMicrocredit, status, deleteFailedBulkTransactions};
+
+/**
+ * app.get('/wipe', async (req,res) => {
+try{
+    let batch = firebase.firestore().batch();
+          let store = [];
+          let lastSorted = [];
+          firebase.firestore().collection('loancollection_logs').get().then((docs) => {
+            docs.forEach(doc => {
+              store.push({external_ref:doc.data()['external_ref'], docId: doc.id})
+            });
+            store.sort((a, b) => {
+                if(b['external_ref'] === a['external_ref']){
+                 lastSorted.push(b);         
+                }
+              });
+              console.log(lastSorted);
+              lastSorted.forEach((uid) => {
+               
+               var transactionsCollection = firebase
+                 .firestore()
+                 .collection("transactions")
+                 .doc(uid['docId']);
+               batch.delete(transactionsCollection);
+             });
+         
+             batch.commit().then(function () {
+               console.log("DELETE BULK TRANSACTION DONE");
+               res.status(200).send({message: "Successfully deleted selected bulk payments"});
+               
+         
+             });
+          
+           })
+           
+           
+}catch(e){
+    console.log(e)
+    res.status(500).send({message: e});
+}
+})
+
+ */
