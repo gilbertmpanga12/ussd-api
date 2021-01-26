@@ -78,7 +78,7 @@ router.get('/api/validate-customer/:customerReferenceId', async function(req,res
         "CUSTOMERREFERENCEID": customerReferenceId
       };
     console.log('IPN CALLED');
-    res.status(200).send({message: 'Syncing succcessful'});
+    res.sendStatus(200);
     collectionlogs({amount: payload['amount'], 
     date_time: parseInt(moment(payload['date_time']).format('x')), 
     external_ref: payload['external_ref'], 

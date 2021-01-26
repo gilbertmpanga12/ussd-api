@@ -48,7 +48,6 @@ app.use('/reports', reports);
 app.get('/refresh-token', getFirebaseUser, (req, res) => res.status(200).json({status: true, ...req.user}));
 app.get('/', (req,res) =>  res.send({message: "server works"}));
 
-
 app.listen(environment.port, () => {
     console.log('listening on🚀🚀🚀' + ' ' + environment.port);
 });
