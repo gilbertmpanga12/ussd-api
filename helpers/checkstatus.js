@@ -85,6 +85,11 @@ function checkBulkStatus(transactionRef) {
         }
 
         if(unsuccessfulPayments.length > 0){
+          // to be deleted
+          incrementTransactionCounter(transactionRef);
+          const total = unsuccessfulPayments.reduce((accumulator, currentValue) => accumulator + parseInt(currentValue['Amount'][0]),0);
+          reduceAmountCollected(total);
+          //end 
           storeFailedBulkTransactions(unsuccessfulPayments);
           checkDisbursementErrorCount().then((errorCount) => {
             if(errorCount.data() > 0 && errorCount.exists){
