@@ -281,6 +281,7 @@ async function deleteFailedBulkTransactions(bulkPayload, res) {
 
 async function deleteSingleBulkTransactions(transactions, res) {
   try {
+    // delete bith single and bulk transactions
     let batch = firebase.firestore().batch();
     transactions.forEach((dataload) => {
       const docId = dataload['docId'];
