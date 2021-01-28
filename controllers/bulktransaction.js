@@ -11,7 +11,7 @@ const parseString = require('xml2js').parseString;
 const {status, storeBulkTransaction, checkBulkStatus, saveTransaction} = require('../helpers/checkstatus');
 const {incrementTransactionCounter, checkForBalance} = require('../helpers/counters');
 const {getFirebaseUser} = require('../helpers/firebaseSecurity');
-const {deleteFailedBulkTransactions} = require('../helpers/checkstatus');
+const {deleteFailedBulkTransactions, deleteSingleBulkTransactions} = require('../helpers/checkstatus');
 
 router.use(getFirebaseUser);
 
@@ -204,6 +204,11 @@ router.get('/ac_internal_transfer/:currencyCode/:eneficiaryAccount/:email/:amoun
 router.post('/delete-selected-bulk-payments', (req,res) => {
     const selectedItems = req.body['selectedItems'];
     deleteFailedBulkTransactions(selectedItems, res);
+});
+
+router.post('/delete-disbursement-transactions', (req, res) => {
+    const items = req.body['selectedItems'];
+    deleteSingleBulkTransactions(items, res);
 });
 
 module.exports = router;

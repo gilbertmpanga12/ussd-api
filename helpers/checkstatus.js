@@ -216,7 +216,8 @@ async function storeBulkTransaction(bulkPayload) {
           transactionInitiationDate: Date.now(), 
           transactionType: "Bulk Payment", phoneNumber:dataload['AccountNumber'][0], 
           amountWithCharges: (parseInt(dataload['Amount'][0]) + 500), 
-          name:dataload['Name'][0], reason: 'Successfully paid UGX ' + dataload['Amount'][0], status:"CONFIRMED"});
+          name:dataload['Name'][0], reason: 'Successfully paid UGX ' + dataload['Amount'][0], 
+          status:"CONFIRMED", docId: docId});
     });
     batch.commit().then(function () {
       console.log("SUCCEEDED BULK TRANSACTION DONE");
@@ -242,7 +243,7 @@ async function storeFailedBulkTransactions(bulkPayload) {
       transactionInitiationDate:Date.now(), 
       transactionType: "Bulk Payment", phoneNumber:dataload['AccountNumber'][0], 
       amountWithCharges: (parseInt(dataload['Amount'][0]) + 500), 
-      name:dataload['Name'][0], reason: dataload['LowLevelErrorMessageNegative'][0], status:"FAILED"});
+      name:dataload['Name'][0], reason: dataload['LowLevelErrorMessageNegative'][0], status:"FAILED", docId: docId});
     });
     batch.commit().then(function () {
       console.log("FAILED TRANSACTION DONE");
@@ -277,6 +278,28 @@ async function deleteFailedBulkTransactions(bulkPayload, res) {
   }
 }
 
+
+async function deleteSingleBulkTransactions(transactions, res) {
+  try {
+    let batch = firebase.firestore().batch();
+    transactions.forEach((dataload) => {
+      const docId = dataload['docId'];
+      var transactionsCollection = firebase
+        .firestore()
+        .collection("transactions")
+        .doc(docId);
+      batch.delete(transactionsCollection);
+    });
+    batch.commit().then(function () {
+      console.log("FAILED TRANSACTION DONE");
+      res.sendStatus(200);
+    });
+  } catch (e) {
+    console.log("FIREBASE FAILURE: BULK SAVE TRANSACTION");
+    console.log(e);
+    res.sendStatus(500);
+  }
+}
 
 
 
@@ -328,7 +351,8 @@ async function notifyOyaMicrocredit(payload){
 }
 
 module.exports = {storePayload, storeBulkTransaction, 
-  fundsCollected, saveTransaction, checkBulkStatus, notifyOyaMicrocredit, status, deleteFailedBulkTransactions};
+  fundsCollected, saveTransaction, checkBulkStatus, 
+  notifyOyaMicrocredit, status, deleteFailedBulkTransactions, deleteSingleBulkTransactions};
 
 /**
  * app.get('/wipe', async (req,res) => {
