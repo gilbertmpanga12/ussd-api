@@ -293,12 +293,12 @@ async function deleteSingleBulkTransactions(transactions, res) {
     });
     batch.commit().then(function () {
       console.log("FAILED TRANSACTION DONE");
-      res.sendStatus(200);
+      res.status(200).send({message: "OK"});
     });
   } catch (e) {
     console.log("FIREBASE FAILURE: BULK SAVE TRANSACTION");
     console.log(e);
-    res.sendStatus(500);
+    res.status(500).send({message: "Failed to delete transaction"});
   }
 }
 
